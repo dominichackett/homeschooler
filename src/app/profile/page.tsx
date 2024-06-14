@@ -93,8 +93,8 @@ const saveProfile = async()=>{
   </video>
   
      
-  <div className="container  ">
-               <div className=" w-full flex flex-col min-h-[500px] -mx-4 bg-bg-color flex justify-center items-center ml-5 mr-5   rounded-xl border border-black">
+  <div className="container p-2 ">
+               <div className=" w-full flex flex-col min-h-[500px] -mx-4 bg-bg-color flex justify-center items-center    rounded-xl border border-black">
               
            
 

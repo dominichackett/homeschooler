@@ -129,7 +129,7 @@ const changeSystem = (e)=>{
 
   <Link
                   href="/createtutorial"
-                  className="ml-4 mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+                  className="ml-80 mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
                 >
                   Create Tutorial
                 </Link>
