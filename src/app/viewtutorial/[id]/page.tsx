@@ -100,6 +100,8 @@ export default function ViewTutorial({params}) {
   const [profile,setProfile] = useState({})
   const [refreshData,setRefreshData] = useState(new Date().getTime())
  const [messages,setMessages] = useState(["Hello","Welcome","British Commonwealth"])
+ const contractRef = useRef(null); // useRef to store the contract instance
+
 // NOTIFICATIONS functions
 const [notificationTitle, setNotificationTitle] = useState();
 const [notificationDescription, setNotificationDescription] = useState();
@@ -108,6 +110,72 @@ const [show, setShow] = useState(false);
 const close = async () => {
 setShow(false);
 };
+async function pause() {
+  await new Promise(resolve => setTimeout(resolve, 15000));
+  console.log("Paused for 5 seconds");
+}
+
+
+function generateEmbedUrl(youtubeUrl) {
+  const videoId = extractVideoId(youtubeUrl);
+  if (!videoId) {
+      return null; // Handle invalid URL or no video ID found
+  }
+  return `https://www.youtube.com/embed/${videoId}`;
+}
+
+function extractVideoId(url) {
+  const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regExp);
+  return (match && match[1]) ? match[1] : null;
+}
+
+function isYouTubeLink(url) {
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+  return youtubeRegex.test(url);
+}
+
+const handleOracleResponsed = async(tutorialId, responseDate) => {
+  console.log(`OracleResponsed event detected: tutorialId=${tutorialId}, responseDate=${responseDate}`);
+  await pause()
+  setRefreshData(new Date().getTime());
+
+
+};
+useEffect(() => {
+ 
+  let isMounted = true;
+
+  const setupListener = async () => {
+    if (account?.address && signer) {
+      try {
+        const newContract = new ethers.Contract(homeSchoolerAddress, homeSchoolerABI, signer);
+
+        // Only update the contractRef if the component is still mounted
+        if (isMounted) {
+          contractRef.current = newContract;
+          console.log('Contract instance created:', contractRef.current);
+
+          // Listen for the OracleResponsed event
+          contractRef.current.on('OracleResponsed', handleOracleResponsed);
+        }
+
+      } catch (error) {
+        console.error('Error setting up contract listener:', error);
+      }
+    }
+  };
+
+  setupListener();
+
+  return () => {
+    isMounted = false; // Mark the component as unmounted
+    if (contractRef.current) {
+      console.log('Cleaning up contract listener...');
+      contractRef.current.off('OracleResponsed', handleOracleResponsed);
+    }
+  };
+}, [account?.address, signer]);
 
 function messageType(text:any){
   if(text.indexOf("[HSTUTORIAL]")!=-1)
@@ -115,23 +183,28 @@ function messageType(text:any){
   if(text.indexOf("[HSQUIZ]")!=-1)
     return 2
 
-  if(text.indexOf("[HSVIDEO]")!=-1)
-    return 3
-   
+  try{
+     JSON.parse(text)
+     return 3   
+  }catch(error)
+  {
+     return -1
+  }
   
 
 }
 
 function removeCode(text:any){
-   let content  = text.replace("[HSTUTORIAL]","")
-   content  = content.replace("[HSTUTORIALEND]","")
-   content  = content.replace("[HSQUIZ]","")
-   content  = content.replace("[HSVIDEO]","")
+   let content  = text.replaceAll("[HSTUTORIAL]","")
+   content  = content.replaceAll("[HSTUTORIALEND]","")
+   content  = content.replaceAll("[HSQUIZ]","")
+   content  = content.replaceAll("[HSVIDEO]","")
+   content = content.replaceAll("[HSTUTORIALTOEND]","")
    return content
 }
 function getTopic(text:any){
 const lines = text.split('\n'); // Split the text into an array of lines
- const firstLine = lines[1]; // Get the first element of the array
+ const firstLine = lines[2]; // Get the first element of the array
   return firstLine
 }
 useEffect(()=>{
@@ -148,10 +221,14 @@ async function getTutorial() {
      for(const index in _tutorials ){
       if(index > 2 && _tutorials[index].role!="user")
        { 
-             const content = removeCode(_tutorials[index].content)
-           const data = {type:messageType(_tutorials[index].content),content:content,topic:getTopic(content)}
+            let content = removeCode(_tutorials[index].content)
+            const _topic = getTopic(content)
+             const mtype =messageType(_tutorials[index].content)
+             if(mtype == 3)
+             content = JSON.parse(content)
+            console.log(content)
+           const data = {type:mtype,content:content,topic:_topic}
            
-           console.log(getTopic(content))
            tutorialArray.push(data)
        } 
         if(index == 2)
@@ -167,7 +244,7 @@ async function getTutorial() {
  if(account?.address && signer)
    getTutorial()
 
-},[account.address,signer])
+},[account.address,signer,refreshData])
 
 const formatText = (text) => {
   if(text == undefined)
@@ -225,6 +302,10 @@ const createTopicTutorial = async()=>{
        const prompt = `I want a tutorial with lessons for students to read for  ${selectedOptionText} add [HSTUTORIAL] at the top.  Students should be able to read the lesson and have an understanding of the topic. It must have examples with answers. Make it as comprehensive as possible.`
        const tx = await contract.request(prompt,params.id)
        await tx.wait()
+       await pause()
+       setRefreshData(new Date().getTime());
+
+
 
   }catch(error)
   {
@@ -247,9 +328,12 @@ const createQuiz = async(topic:string)=>{
        setShow(true)
        
        console.log(topic)
-       const prompt = `Generate a 5 question quiz for ${topic} It will be multiple choice.  with A B C D as options.  Ask me one question then await my response.  Put [HSQUIZ] at the top of each question.`
+       const prompt = `Generate a 5 question quiz for ${topic} It must be multiple choice with A,B,C and D as options. Put [HSQUIZ] at the top of each question. Only one question should be in your response. Do not show the answers the student will have to figure out the answers.`
        const tx = await contract.request(prompt,params.id)
        await tx.wait()
+       await pause()
+       setRefreshData(new Date().getTime());
+     
 
   }catch(error)
   {
@@ -271,14 +355,44 @@ const answerQuiz = async(answer:number)=>{
        setNotificationDescription("Answering quiz please wait.")
        setShow(true)
        
-       console.log(topic)
+       console.log(answer)
        const tx = await contract.answerQuiz(answer,params.id)
        await tx.wait()
-
+       await pause()
+       setRefreshData(new Date().getTime());
+     
   }catch(error)
   {
     setDialogType(2) //Error
     setNotificationTitle("Tutorial Quiz");
+    setNotificationDescription(error?.error?.data?.message ? error?.error?.data?.message: error.message )
+    setIsSaving(false)
+
+    setShow(true)
+  }
+}
+
+const getVideos = async(topic:string)=>{
+  const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer)
+  try{
+
+       setDialogType(3) //Info
+       setNotificationTitle("Tutorial Videos")
+       setNotificationDescription("Getting videos please wait.")
+       setShow(true)
+       console.log(topic)
+       
+       const prompt = `I need youtube videos for ${topic} ${tutorial.year}`
+       const tx = await contract.videoTutorials(prompt,params.id)
+       
+       await tx.wait()
+       await pause()
+       setRefreshData(new Date().getTime());
+     
+  }catch(error)
+  {
+    setDialogType(2) //Error
+    setNotificationTitle("Tutorial Videos");
     setNotificationDescription(error?.error?.data?.message ? error?.error?.data?.message: error.message )
     setIsSaving(false)
 
@@ -360,17 +474,28 @@ const answerQuiz = async(answer:number)=>{
        </div>
 
     {messages.map((message,index) =>(
-        <div key={index}>
-               <div  className="mb-8  p-6  w-full flex flex-col min-h-[500px]  bg-bg-color     rounded-xl border border-black">
+      <div key={index}>
+                  <div  className="mb-8  p-6  w-full flex flex-col min-h-[500px]  bg-bg-color     rounded-xl border border-black">
               
-              <div className='ml-6'>           <Speech styles={style} text={message.content} stop={true} pause={true} resume={true} /></div>
-              <p className='m-6 mb-2  text-2xl text-white font-bold'>{message.type ==1 ? message.topic :"" }</p>
-              <div className="m-6 text-white">{formatText(message.content)}</div>
+            {message.type <= 2 &&  <div className='ml-6'>           <Speech styles={style} text={message.content} stop={true} pause={true} resume={true} /></div>}
+            {message.type <= 2 &&   <p className='m-6 mb-2  text-2xl text-white font-bold'>{message.type ==1 ? message.topic :"" }</p>}
+               
+            {message.type <= 2 &&    <div className=" m-6 text-white">{formatText(message.content)}</div>}
+                        {message.type == 3 &&                   <div className="mb-12 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
 
+                        
+                        {message.content.map((video,_index) =>(
+                         isYouTubeLink(video.link)  == true && <div key={_index} className='mb-6'><iframe width="560" height="315" 
+                         src={ generateEmbedUrl(video.link)} title="YouTube video player" 
+                         frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>))}
+                        </div>}
+
+    
 
 {message.type == 1 && <div className='ml-6'><button                   className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
 >More...</button>
-<button                   className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+<button  onClick={()=>getVideos(message.topic)}                   className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
 >Videos</button>
 <button        onClick={()=>createQuiz(message.topic)}           className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
 >Quiz</button>

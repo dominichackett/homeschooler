@@ -1,6 +1,6 @@
-export const homeSchoolerAddress ="0x445C29606bF7bFBE8Adc3718b7E4976171ab5147"
+export const homeSchoolerAddress ="0x3050d2F851F4EF16a4392b0Fe0d4973F26f94dCD"
 
-export const homeSchoolerABI = [
+export const homeSchoolerABI =[
 	{
 		"inputs": [
 			{
@@ -15,6 +15,29 @@ export const homeSchoolerABI = [
 			}
 		],
 		"name": "answerQuiz",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "runId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "response",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "errorMessage",
+				"type": "string"
+			}
+		],
+		"name": "onOracleFunctionResponse",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -110,6 +133,62 @@ export const homeSchoolerABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "initialOracleAddress",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOracleAddress",
+				"type": "address"
+			}
+		],
+		"name": "OracleAddressUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tutorialId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "responseDate",
+				"type": "uint256"
+			}
+		],
+		"name": "OracleResponsed",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOracleAddress",
+				"type": "address"
+			}
+		],
+		"name": "setOracleAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "prompt",
 				"type": "string"
@@ -142,43 +221,6 @@ export const homeSchoolerABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "initialOracleAddress",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOracleAddress",
-				"type": "address"
-			}
-		],
-		"name": "OracleAddressUpdated",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOracleAddress",
-				"type": "address"
-			}
-		],
-		"name": "setOracleAddress",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -196,6 +238,24 @@ export const homeSchoolerABI = [
 		],
 		"name": "TutorialCreated",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "prompt",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tutorialId",
+				"type": "uint256"
+			}
+		],
+		"name": "videoTutorials",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -230,6 +290,56 @@ export const homeSchoolerABI = [
 				"internalType": "string[]",
 				"name": "",
 				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getMytutorials",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "student",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "schoolSystem",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "schoolYear",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "subject",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "messagesCount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFinished",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct HomeSchooler.MyTutorial[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",

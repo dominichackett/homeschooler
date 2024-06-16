@@ -107,7 +107,7 @@ import Link from 'next/link';
                               Profile
                             </Link>
                             <Link
-                              href="/profile"
+                              href="/tutorials"
                               className="block rounded py-[10px] px-4 text-sm font-medium text-[#bababa] hover:text-white"
                             >
                               Tutorials

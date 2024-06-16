@@ -7,21 +7,23 @@ import Link from 'next/link'
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import { useState,useEffect,useRef } from 'react';
 import { useAccount} from 'wagmi'
+import Notification from '@/components/Notification/Notification';
+import { useEthersSigner } from '@/signer/signer'
+import { ethers } from 'ethers';
+import { homeSchoolerABI,homeSchoolerAddress } from '@/contracts/contracts';
+import { useRouter } from 'next/navigation';
 
 export default function CreateTutorial() {
-  const account = useAccount()
   const [isSaving,setIsSaving] = useState(false)
   const [preview,setPreview] = useState()
-  const [system,setSystem] = useState()
   const [schoolYears,setSchoolYears] = useState([])
   const [subjects,setSubjects] = useState([])
   const [selectedFile, setSelectedFile] = useState()
   const [target,setTarget] = useState()
+  const [system,setSystem] = useState()
   const filename = useRef()
-  const [profileExist,setProfileExist] = useState(false)
-  const [gotProfile,setGotProfile] = useState(false)
-  const [profile,setProfile] = useState({})
-  const [refreshData,setRefreshData] = useState(new Date().getTime())
+  const signer = useEthersSigner()
+  const router = useRouter()
 
 // NOTIFICATIONS functions
 const [notificationTitle, setNotificationTitle] = useState();
@@ -58,7 +60,75 @@ const onSelectFile = (e) => {
   
   }
 
-const saveProfile = async()=>{
+const createTutorial = async()=>{
+
+  const schoolSystem = document.getElementById("schoolSystem")?.value 
+
+
+
+  const selectedSchoolYear = document.getElementById("schoolYear") 
+    // Get the selected <option> element
+    const _schoolYear = selectedSchoolYear.options[selectedSchoolYear.selectedIndex];
+
+    // Get the displayed text of the selected option
+    var  schoolYear= _schoolYear.textContent;
+  
+  const subject = document.getElementById("subject").value 
+
+console.log(schoolSystem)
+console.log(schoolYear)
+console.log(subject)
+  if(schoolSystem == "NONE"){
+    setDialogType(2) //Error
+    setNotificationTitle("Create Tutorial")
+    setNotificationDescription("Please select system")
+    setShow(true)
+    return
+  }
+
+  if(selectedSchoolYear.value  == "NONE"){
+    setDialogType(2) //Error
+    setNotificationTitle("Create Tutorial")
+    setNotificationDescription("Please select school year")
+    setShow(true)
+    return
+  }
+
+  if(subject == "NONE"){
+    setDialogType(2) //Error
+    setNotificationTitle("Create Tutorial")
+    setNotificationDescription("Please select subject")
+    setShow(true)
+    return
+  }
+
+
+  setIsSaving(true)
+  const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer)
+  try{
+
+       setDialogType(3) //Info
+       setNotificationTitle("Create Tutorial")
+       setNotificationDescription("Creating turorial please wait.")
+       setShow(true)
+       
+       const prompt = `Give me an exhaustive list of Topics for ${schoolYear}  ${subject}. place the list within [HSLISTSTART][HSLISTEND]
+       `
+       const tx = await contract.startTutorial(prompt,schoolYear,schoolSystem,subject)
+       await tx.wait()
+       router.push("/tutorials")
+
+  }catch(error)
+  {
+    setDialogType(2) //Error
+    setNotificationTitle("Create Tutorial");
+    setNotificationDescription(error?.error?.data?.message ? error?.error?.data?.message: error.message )
+    setIsSaving(false)
+
+    setShow(true)
+  }
+
+
 
 }
 
@@ -141,13 +211,13 @@ const changeSystem = (e)=>{
                       disabled={isSaving }
                       required={!selectedFile ? true: false}
                       type="file"
-                      name="profileImage"
-                      id="profileImage"
+                      name="tutorialImage"
+                      id="tutorialImage"
                       className="sr-only"
                       onChange={onSelectFile}
                     />
                     <label
-                      for="profileImage"
+                      for="tutorialImage"
                       className="cursor-pointer relative flex h-[480px] min-h-[200px] items-center justify-center rounded-lg border border-dashed border-[#A1A0AE] bg-[#353444] p-12 text-center"
                     >
                      <img src={preview ? preview: '/images/homeschooler.jpg'}/>
@@ -161,7 +231,7 @@ const changeSystem = (e)=>{
                   <div className="pt-2 ">
                     <button disabled={isSaving }
                       className="hover:shadow-form w-full rounded-md bg-primary py-3 px-8 text-center text-base font-semibold text-white outline-none"
-                    onClick={()=>saveProfile()}
+                    onClick={()=>createTutorial()}
                     type="button"
                     >
                         Create Tutorial
@@ -260,7 +330,14 @@ const changeSystem = (e)=>{
       
     </section>
     <Footer />
-   
+    <Notification
+        type={dialogType}
+        show={show}
+        close={close}
+        title={notificationTitle}
+        description={notificationDescription}
+      />
+
 
      </main>
      </>

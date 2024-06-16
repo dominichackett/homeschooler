@@ -8,25 +8,18 @@ import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import { useState,useEffect,useRef } from 'react';
 import { useAccount} from 'wagmi'
 import { useRouter } from 'next/navigation';
+import { ethers } from 'ethers';
+import { homeSchoolerABI, homeSchoolerAddress } from '@/contracts/contracts';
+import { useEthersSigner } from '@/signer/signer'
 
 export default function Tutorials() {
   const account = useAccount()
   const router = useRouter()
+  const signer = useEthersSigner()
 
-  const [isSaving,setIsSaving] = useState(false)
-  const [preview,setPreview] = useState()
-  const [tutorials,setTutorials] = useState([{id:1,system:"British / Commonwealth",image:"/images/british.png",year:"Form 1",subject:"Mathematics"}])
-  const [system,setSystem] = useState()
-  const [schoolYears,setSchoolYears] = useState([])
-  const [subjects,setSubjects] = useState([])
-  const [selectedFile, setSelectedFile] = useState()
-  const [target,setTarget] = useState()
-  const filename = useRef()
-  const [profileExist,setProfileExist] = useState(false)
-  const [gotProfile,setGotProfile] = useState(false)
-  const [profile,setProfile] = useState({})
-  const [refreshData,setRefreshData] = useState(new Date().getTime())
 
+  const [tutorials,setTutorials] = useState([])
+ 
 // NOTIFICATIONS functions
 const [notificationTitle, setNotificationTitle] = useState();
 const [notificationDescription, setNotificationDescription] = useState();
@@ -36,63 +29,33 @@ const close = async () => {
 setShow(false);
 };
 
-// create a preview as a side effect, whenever selected file is changed
-useEffect(() => {
-    if (!selectedFile) {
-        setPreview(undefined)
-        return
-    }
-  
-    const objectUrl = URL.createObjectURL(selectedFile)
-    setPreview(objectUrl)
-  
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl)
-  }, [selectedFile])
 
-const onSelectFile = (e) => {
-    if (!e.target.files || e.target.files.length === 0) {
-        return
-    }
-  
-    // I've kept this example simple by using the first image instead of multiple
-    setSelectedFile(e.target.files[0])
-    filename.current = e.target.files[0].name
-    setTarget(e.target.files)
-  
+
+useEffect(()=>{
+
+  async function getTutorials(){
+   const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer);
+   const _tutorials = await contract.getMytutorials()
+   let tutorialArray=[]
+  for(const index in _tutorials )
+    {
+
+      tutorialArray.push({id:_tutorials[index].id,
+        system:(_tutorials[index].schoolSystem == "UK" ? "British / Commonwealth":"American / Canadian"),
+      year:_tutorials[index].schoolYear,subject:_tutorials[index].subject,
+    image:(_tutorials[index].schoolSystem == "UK" ? "/images/british.png":"/images/usacan.webp")})
+
+    } 
+   setTutorials(tutorialArray)
   }
 
-const saveProfile = async()=>{
-
-}
-
-const changeSystem = (e)=>{
-   if(e.target.value=="USACAN")
-      {
-          setPreview("/images/usacan.webp")
-          setSubjects(["Biology", "Calculus", "Chemistry", "English Language", "French", "Geography", "History", "ICT", "Literature", "Mathematics", "Music", "Physical Education", "Physics", "Science", "Spanish"]);
-                 setSchoolYears([{id:"grade7",year:"Grade 7"},{id:"grade8",year:"Grade 8"},{id:"grade9",year:"Grade 9"},{id:"grade10",year:"Grade 10"},{id:"grade11",year:"Grade 11"},{id:"grade12",year:"Grade 12"}])
-
-      
-      }
-     
-   if(e.target.value=="UK")
-   {
-        setPreview("/images/british.png")
-        setSubjects(["Biology", "Chemistry", "English Language", "French", "Geography", "History", "ICT", "Mathematics", "Music", "Physical Education", "Physics", "Science", "Spanish"]);
-        setSchoolYears([{id:"form1",year:"Form 1"},{id:"form2",year:"Form 2"},{id:"form3",year:"Form 3"},{id:"form4",year:"Form 4"},{id:"form5",year:"Form 5"}])
-   }
-   if(e.target.value=="NONE")
-   {
-      setPreview("/images/homeschooler.jpg")
-     setSubjects([])
-     setSchoolYears([])
-   }
+  if(account?.address && signer)
+    getTutorials()
  
-  
-   
-    setSystem(e.target.value)
-}
+ },[account.address,signer])
+
+
+
   return (
     <>
       <Head>
@@ -129,7 +92,7 @@ const changeSystem = (e)=>{
 
   <Link
                   href="/createtutorial"
-                  className="ml-80 mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+                  className="ml-8 mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
                 >
                   Create Tutorial
                 </Link>
