@@ -304,7 +304,7 @@ const createTopicTutorial = async()=>{
        await tx.wait()
        await pause()
        setRefreshData(new Date().getTime());
-
+       setShow(true)
 
 
   }catch(error)
@@ -333,6 +333,7 @@ const createQuiz = async(topic:string)=>{
        await tx.wait()
        await pause()
        setRefreshData(new Date().getTime());
+       setShow(false)
      
 
   }catch(error)
@@ -360,6 +361,7 @@ const answerQuiz = async(answer:number)=>{
        await tx.wait()
        await pause()
        setRefreshData(new Date().getTime());
+       setShow(false)
      
   }catch(error)
   {
@@ -388,6 +390,7 @@ const getVideos = async(topic:string)=>{
        await tx.wait()
        await pause()
        setRefreshData(new Date().getTime());
+       setShow(false)
      
   }catch(error)
   {
@@ -493,8 +496,7 @@ const getVideos = async(topic:string)=>{
 
     
 
-{message.type == 1 && <div className='ml-6'><button                   className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
->More...</button>
+{message.type == 1 && <div className='ml-6'>
 <button  onClick={()=>getVideos(message.topic)}                   className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
 >Videos</button>
 <button        onClick={()=>createQuiz(message.topic)}           className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"

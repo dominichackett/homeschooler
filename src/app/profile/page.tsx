@@ -7,7 +7,11 @@ import Link from 'next/link'
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import { useState,useEffect,useRef } from 'react';
 import { useAccount} from 'wagmi'
-
+import { homeSchoolerABI, homeSchoolerAddress } from '@/contracts/contracts';
+import { ethers } from 'ethers';
+import { useEthersSigner } from '@/signer/signer'
+import { uploadToIPFS } from '@/fleek/fleek';
+import Notification from '@/components/Notification/Notification';
 export default function Profile() {
   const account = useAccount()
   const [isSaving,setIsSaving] = useState(false)
@@ -19,6 +23,7 @@ export default function Profile() {
   const [gotProfile,setGotProfile] = useState(false)
   const [profile,setProfile] = useState({})
   const [refreshData,setRefreshData] = useState(new Date().getTime())
+  const signer = useEthersSigner()
 
 // NOTIFICATIONS functions
 const [notificationTitle, setNotificationTitle] = useState();
@@ -29,6 +34,36 @@ const close = async () => {
 setShow(false);
 };
 
+useEffect(()=>{
+  async function getProfile(){
+   const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer) 
+   try{
+         const _profile = await contract.getProfile(account.address) 
+         if(_profile)
+         {
+        
+           setGotProfile(true)
+           setProfileExist(true)   
+           setProfile(_profile)
+           setPreview(_profile.imageUrl)
+         }else
+         {
+            setGotProfile(true)
+            setProfileExist(false)   
+         
+         }
+         
+   }catch(error)
+   {
+      console.log(error)
+   }
+   
+  }
+ 
+    if(account?.address && signer)
+      getProfile()
+ 
+ },[account?.address,signer])
 // create a preview as a side effect, whenever selected file is changed
 useEffect(() => {
     if (!selectedFile) {
@@ -55,9 +90,77 @@ const onSelectFile = (e) => {
   
   }
 
-const saveProfile = async()=>{
-
-}
+  const saveProfile = async()=>{
+    setIsSaving(true)
+     const name = document.getElementById("name").value
+     const description = document.getElementById("description").value 
+     if(!selectedFile && !profile?.image)
+     {   setDialogType(2) //Error
+         setNotificationTitle("Profile")
+         setNotificationDescription("Please select a profile picture")
+         setIsSaving(false)
+         setShow(true)
+         return
+     } 
+  
+     if(!name || !description)
+     {
+  
+      setDialogType(2) //Error
+      setNotificationTitle("Profile")
+      setNotificationDescription("Please enter profile details")
+      setShow(true)
+      setIsSaving(false)
+  
+      return
+  
+     }
+      
+      const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer) 
+     try{
+  
+      setDialogType(3) //Info
+      setNotificationTitle("Profile");
+      setNotificationDescription("Uploading profile image.")
+      setShow(true)
+    
+      let cid
+      let url =profile?.image
+      
+      if(selectedFile) //upload image file
+      {const result = await  uploadToIPFS(filename.current,selectedFile)
+      //console.log(await result.json())
+      
+       cid =result.cid.toV1().toString()
+       url = `https://${cid}.ipfs.cf-ipfs.com`
+      
+       setShow(false)
+      }
+       
+  
+       
+       const tx = await contract.callStatic.setProfile(url,name,description)
+       const tx1 = await contract.setProfile(url,name,description)
+       await tx1.wait()
+       setDialogType(1) //Success
+       setNotificationTitle("Profile");
+       setNotificationDescription("Profile updated successfully.")
+       setShow(true)
+   
+       setIsSaving(false)
+  
+  
+     }catch(error)
+     {
+        setDialogType(2) //Error
+        setNotificationTitle("Profile");
+        setNotificationDescription(error?.error?.data?.message ? error?.error?.data?.message: error.message )
+        setIsSaving(false)
+  
+        setShow(true)
+      return
+     }
+  }
   return (
     <>
       <Head>
@@ -210,7 +313,13 @@ const saveProfile = async()=>{
       
     </section>
     <Footer />
-   
+    <Notification
+        type={dialogType}
+        show={show}
+        close={close}
+        title={notificationTitle}
+        description={notificationDescription}
+      />
 
      </main>
      </>

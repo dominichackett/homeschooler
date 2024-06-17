@@ -1,4 +1,4 @@
-export const homeSchoolerAddress ="0x3050d2F851F4EF16a4392b0Fe0d4973F26f94dCD"
+export const homeSchoolerAddress ="0x512583Ba6990566A75385CB5A63e1c608cB7302e"
 
 export const homeSchoolerABI =[
 	{
@@ -126,6 +126,29 @@ export const homeSchoolerABI =[
 			}
 		],
 		"name": "request",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "imageUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			}
+		],
+		"name": "setProfile",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -340,6 +363,47 @@ export const homeSchoolerABI =[
 				"internalType": "struct HomeSchooler.MyTutorial[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getProfile",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "imageUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "isvalue",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct HomeSchooler.Profile",
+				"name": "",
+				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",

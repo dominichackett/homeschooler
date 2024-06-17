@@ -507,6 +507,11 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
+"@fleekxyz/sdk@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@fleekxyz/sdk/-/sdk-1.4.2.tgz#2ab1cf219671dcbb8ff379703e2e53e4a4fdc80f"
+  integrity sha512-JJCzIFH/Jpsu4WqYhcH7rsxmuGw4BNFykaXB8Py/ewuYNp1pLh1ucEAGJixZirnn1ajkAcyRyo82gRZU28qHzQ==
+
 "@fortawesome/fontawesome-common-types@6.5.2":
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.5.2.tgz#eaf2f5699f73cef198454ebc0c414e3688898179"
