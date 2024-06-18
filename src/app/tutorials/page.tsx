@@ -92,7 +92,7 @@ useEffect(()=>{
 
   <Link
                   href="/createtutorial"
-                  className="ml-8 mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+                  className="sm:ml-8 mt-1 mr-5 mb-5 lg:ml-80 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
                 >
                   Create Tutorial
                 </Link>
