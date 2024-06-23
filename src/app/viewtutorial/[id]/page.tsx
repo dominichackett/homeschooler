@@ -182,7 +182,8 @@ function messageType(text:any){
     return 1
   if(text.indexOf("[HSQUIZ]")!=-1)
     return 2
-
+  if(text.indexOf("[HSTEST]")!=-1)
+    return 4
   try{
      JSON.parse(text)
      return 3   
@@ -200,6 +201,10 @@ function removeCode(text:any){
    content  = content.replaceAll("[HSQUIZ]","")
    content  = content.replaceAll("[HSVIDEO]","")
    content = content.replaceAll("[HSTUTORIALTOEND]","")
+   content = content.replaceAll("[HSTEST]","")
+   content = content.replaceAll("[HSTESTEND]","")
+
+
    return content
 }
 function getTopic(text:any){
@@ -347,6 +352,35 @@ const createQuiz = async(topic:string)=>{
   }
 }
 
+const createTest = async(topic:string)=>{
+  const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer)
+  try{
+
+       setDialogType(3) //Info
+       setNotificationTitle("Create Test")
+       setNotificationDescription("Creating test please wait.")
+       setShow(true)
+       
+       console.log(topic)
+       const prompt = `Generate a 10 question test for ${topic} It must be multiple choice with A,B,C and D as options. Put [HSTEST] at the top of each question. Show all questions  in your response. Do not show the answers the student will have to figure out the answers.`
+       const tx = await contract.request(prompt,params.id)
+       await tx.wait()
+       await pause()
+       setRefreshData(new Date().getTime());
+       setShow(false)
+     
+
+  }catch(error)
+  {
+    setDialogType(2) //Error
+    setNotificationTitle("Create Test");
+    setNotificationDescription(error?.error?.data?.message ? error?.error?.data?.message: error.message )
+    setIsSaving(false)
+
+    setShow(true)
+  }
+}
+
 const answerQuiz = async(answer:number)=>{
   const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer)
   try{
@@ -402,6 +436,17 @@ const getVideos = async(topic:string)=>{
     setShow(true)
   }
 }
+
+const copyToClipboard = (content:any) => {
+    navigator.clipboard.writeText(content)
+      .then(() => {
+          })
+      .catch((err) => {
+        console.error('Could not copy text: ', err);
+      });
+  
+};
+
   return (
     <>
       <Head>
@@ -480,10 +525,10 @@ const getVideos = async(topic:string)=>{
       <div key={index}>
                   <div  className="mb-8  p-6  w-full flex flex-col min-h-[500px]  bg-bg-color     rounded-xl border border-black">
               
-            {message.type <= 2 &&  <div className='ml-6'>           <Speech styles={style} text={message.content} stop={true} pause={true} resume={true} /></div>}
-            {message.type <= 2 &&   <p className='m-6 mb-2  text-2xl text-white font-bold'>{message.type ==1 ? message.topic :"" }</p>}
+            {(message.type <= 2 || message.type== 4) &&  <div className='ml-6'>           <Speech styles={style} text={message.content} stop={true} pause={true} resume={true} /></div>}
+            {(message.type <= 2 || message.type == 4) &&   <p className='m-6 mb-2  text-2xl text-white font-bold'>{message.type ==1 ? message.topic :"" }</p>}
                
-            {message.type <= 2 &&    <div className=" m-6 text-white">{formatText(message.content)}</div>}
+            {(message.type <= 2 || message.type == 4)  &&  <div className=" m-6 text-white">{formatText(message.content)}</div>}
                         {message.type == 3 &&                   <div className="mb-12 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
 
                         
@@ -501,6 +546,8 @@ const getVideos = async(topic:string)=>{
 >Videos</button>
 <button        onClick={()=>createQuiz(message.topic)}           className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
 >Quiz</button>
+<button        onClick={()=>createTest(message.topic)}           className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+>Test</button>
 
 </div>}
 
@@ -512,6 +559,13 @@ const getVideos = async(topic:string)=>{
  >C</button>
  <button onClick={()=>answerQuiz(3)}                  className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
  >D</button>
+ 
+ </div>}
+ 
+ {message.type == 4 && <div className='ml-6'>
+  <button        onClick={()=>copyToClipboard(message.content)}           className="mt-1 mr-5 mb-5 inline-flex items-center justify-center rounded-md border-2 border-primary bg-primary py-3 px-7 text-base font-semibold text-white transition-all hover:bg-opacity-90"
+>Copy To Clipboard</button>
+
  
  </div>}
  
