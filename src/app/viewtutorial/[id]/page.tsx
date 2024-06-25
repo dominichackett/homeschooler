@@ -233,7 +233,7 @@ async function getTutorial() {
              content = JSON.parse(content)
             console.log(content)
            const data = {type:mtype,content:content,topic:_topic}
-           
+           if(content !="error")
            tutorialArray.push(data)
        } 
         if(index == 2)
@@ -327,13 +327,14 @@ const createQuiz = async(topic:string)=>{
   const contract = new ethers.Contract(homeSchoolerAddress,homeSchoolerABI,signer)
   try{
 
+    
        setDialogType(3) //Info
        setNotificationTitle("Create Tutorial")
        setNotificationDescription("Creating quiz please wait.")
        setShow(true)
        
        console.log(topic)
-       const prompt = `Generate a 5 question quiz for ${topic} It must be multiple choice with A,B,C and D as options. Put [HSQUIZ] at the top of each question. Only one question should be in your response. Do not show the answers the student will have to figure out the answers.`
+       const prompt = `Generate a 2 question quiz for ${topic} ${tutorial.year} ${tutorial.subject} It must be multiple choice with A,B,C and D as options. Put [HSQUIZ] at the top of each question.  Do not show the answers the student will have to figure out the answers. Randomize the answers. Only one question at a time in your response.`
        const tx = await contract.request(prompt,params.id)
        await tx.wait()
        await pause()
@@ -362,7 +363,7 @@ const createTest = async(topic:string)=>{
        setShow(true)
        
        console.log(topic)
-       const prompt = `Generate a 10 question test for ${topic} It must be multiple choice with A,B,C and D as options. Put [HSTEST] at the top of each question. Show all questions  in your response. Do not show the answers the student will have to figure out the answers.`
+       const prompt = `Generate a 10 question test for ${topic} ${tutorial.year} ${tutorial.subject} .It must be multiple choice with A,B,C and D as options. Put [HSTEST] at the top of each question. Show all questions in your response. Do not show the answers the student will have to figure out the answers. Randomize the answers.`
        const tx = await contract.request(prompt,params.id)
        await tx.wait()
        await pause()
@@ -418,7 +419,8 @@ const getVideos = async(topic:string)=>{
        setShow(true)
        console.log(topic)
        
-       const prompt = `I need youtube videos for ${topic} ${tutorial.year}`
+       const prompt = `I need youtube videos for ${topic} ${tutorial.year} ${tutorial.subject}`
+       
        const tx = await contract.videoTutorials(prompt,params.id)
        
        await tx.wait()

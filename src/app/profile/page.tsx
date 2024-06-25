@@ -94,7 +94,7 @@ const onSelectFile = (e) => {
     setIsSaving(true)
      const name = document.getElementById("name").value
      const description = document.getElementById("description").value 
-     if(!selectedFile && !profile?.image)
+     if(!selectedFile && !profile?.imageUrl)
      {   setDialogType(2) //Error
          setNotificationTitle("Profile")
          setNotificationDescription("Please select a profile picture")
@@ -125,7 +125,7 @@ const onSelectFile = (e) => {
       setShow(true)
     
       let cid
-      let url =profile?.image
+      let url =profile?.imageUrl
       
       if(selectedFile) //upload image file
       {const result = await  uploadToIPFS(filename.current,selectedFile)

@@ -51,7 +51,7 @@ contract HomeSchooler {
       address private owner;
       address public oracleAddress;
 
-      IOracle.GroqRequest private config;
+      IOracle.OpenAiRequest  private config;
       event OracleAddressUpdated(address indexed newOracleAddress);
 
       constructor(
@@ -61,18 +61,20 @@ contract HomeSchooler {
         oracleAddress = initialOracleAddress;
         tutorialsCount = 0;
 
-        config = IOracle.GroqRequest({
-        model : "mixtral-8x7b-32768",
-        frequencyPenalty : 21, // > 20 for null
-        logitBias : "", // empty str for null
-        maxTokens : 1000, // 0 for null
-        presencePenalty : 21, // > 20 for null
-        responseFormat : "",
-        seed : 0, // null
-        stop : "", // null
-        temperature : 21, // Example temperature (scaled up, 10 means 1.0), > 20 means null
-        topP : 101, // Percentage 0-100, > 100 means null
-        user : "" // null
+             config = IOracle.OpenAiRequest({
+            model : "gpt-4-turbo-preview",
+            frequencyPenalty : 21, // > 20 for null
+            logitBias : "", // empty str for null
+            maxTokens : 1000, // 0 for null
+            presencePenalty : 21, // > 20 for null
+            responseFormat : "{\"type\":\"text\"}",
+            seed : 0, // null
+            stop : "", // null
+            temperature : 10, // Example temperature (scaled up, 10 means 1.0), > 20 means null
+            topP : 101, // Percentage 0-100, > 100 means null
+            tools : "[{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"Search the internet\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Search query\"}},\"required\":[\"query\"]}}},{\"type\":\"function\",\"function\":{\"name\":\"image_generation\",\"description\":\"Generates an image using Dalle-2\",\"parameters\":{\"type\":\"object\",\"properties\":{\"prompt\":{\"type\":\"string\",\"description\":\"Dalle-2 prompt to generate an image\"}},\"required\":[\"prompt\"]}}}]",
+            toolChoice : "auto", // "none" or "auto"
+            user : "" // null
         });
     }
 
@@ -101,7 +103,7 @@ contract HomeSchooler {
          tutorialsCount = currentId + 1; 
 
          myTutorials[msg.sender].push(currentId);
-        IOracle(oracleAddress).createGroqLlmCall(currentId, config);
+        IOracle(oracleAddress).createOpenAiLlmCall(currentId, config);
         emit TutorialCreated(msg.sender, currentId);
 
         return currentId;
@@ -129,9 +131,9 @@ contract HomeSchooler {
     }
 
 
- function onOracleGroqLlmResponse(
+ function onOracleOpenAiLlmResponse(
         uint runId,
-        IOracle.GroqResponse memory response,
+               IOracle.OpenAiResponse memory response,
         string memory errorMessage
     ) public onlyOracle {
 
@@ -214,7 +216,7 @@ contract HomeSchooler {
         userMessage.content = prompt;
         tutorial.messages.push(userMessage);
 
-        IOracle(oracleAddress).createGroqLlmCall(tutorialId, config);
+        IOracle(oracleAddress).createOpenAiLlmCall(tutorialId, config);
 
        }
 
@@ -244,7 +246,7 @@ contract HomeSchooler {
         tutorial.messages.push(userMessage);
         tutorial.messagesCount++;
 
-        IOracle(oracleAddress).createGroqLlmCall(tutorialId, config);
+        IOracle(oracleAddress).createOpenAiLlmCall(tutorialId, config);
      }  
 
      function getTutorialMessages(uint tutorialId) public view returns (Message[] memory){

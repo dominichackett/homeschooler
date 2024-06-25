@@ -112,8 +112,7 @@ console.log(subject)
        setNotificationDescription("Creating turorial please wait.")
        setShow(true)
        
-       const prompt = `Give me an exhaustive list of Topics for ${schoolYear}  ${subject}. place the list within [HSLISTSTART][HSLISTEND]
-       `
+       const prompt = `Give me an exhaustive list of Topics for ${schoolYear}  ${subject}. place the list within [HSLISTSTART][HSLISTEND].  Only show the tags and the list please.`
        const tx = await contract.startTutorial(prompt,schoolYear,schoolSystem,subject)
        await tx.wait()
        router.push("/tutorials")

@@ -1,6 +1,6 @@
-export const homeSchoolerAddress ="0x512583Ba6990566A75385CB5A63e1c608cB7302e"
+export const homeSchoolerAddress = "0x72555AbD0b99f701C1fD2479C53aAe75F01df3e9"  //"0x980CEc40A6E4067FA4a8Dc301f7aBf1D77a5133d"
 
-export const homeSchoolerABI =[
+export const homeSchoolerABI = [
 	{
 		"inputs": [
 			{
@@ -62,6 +62,16 @@ export const homeSchoolerABI =[
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "functionName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "functionArguments",
+						"type": "string"
+					},
+					{
 						"internalType": "uint64",
 						"name": "created",
 						"type": "uint64"
@@ -97,7 +107,7 @@ export const homeSchoolerABI =[
 						"type": "uint32"
 					}
 				],
-				"internalType": "struct IOracle.GroqResponse",
+				"internalType": "struct IOracle.OpenAiResponse",
 				"name": "response",
 				"type": "tuple"
 			},
@@ -107,7 +117,7 @@ export const homeSchoolerABI =[
 				"type": "string"
 			}
 		],
-		"name": "onOracleGroqLlmResponse",
+		"name": "onOracleOpenAiLlmResponse",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
