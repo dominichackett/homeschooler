@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Home Schooler - AI Tutor
 
 ## Getting Started
 
-First, run the development server:
+First  deploy
+HomeSchooler.sol to Galadriel 
+Modify the homeSchoolerAddress in contracts/contracts.tsx
+
+Then run the development server:
 
 ```bash
-npm run dev
-# or
+yarn install
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Summary
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Home Schooler is an AI Tutor Dapp designed to assist high school students in their studies. It leverages the capabilities of Galadriel, a platform that empowers developers to create AI applications and agents via smart contracts. By utilizing Galadriel, Home Schooler operates in a decentralized manner, ensuring that all interactions and data are managed on-chain. This integration provides a secure, transparent, and efficient educational tool for students, utilizing the latest advancements in AI and blockchain technology.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Overview
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Home Schooler is an AI-powered educational companion designed to revolutionize the learning experience for high school students. It offers a comprehensive suite of tools to support personalized learning, making education accessible, engaging, and effective. One of its key features is the ability to create detailed tutorials by selecting the school system, class or year, and subject, then entering the tutorial title, description, and objectives, and adding content such as text, media, and interactive elements. Once a tutorial is created, students can select a topic they wish to learn about, and Home Schooler will generate a detailed tutorial. Additionally, Home Schooler can query the web and present relevant YouTube videos based on the current tutorial, enhancing the learning experience with supplementary visual and auditory resources. Another powerful feature is the ability to generate interactive quizzes and tests aligned with the tutorial content, providing immediate feedback and helping students reinforce their understanding and track their progress over time. This integration of personalized tutorials, multimedia content, and interactive assessments ensures that Home Schooler caters to diverse learning styles and promotes effective, active learning.
+## Demo Video
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+[![IMAGE ALT TEXT HERE](https://github.com/dominichackett/homeschooler/blob/main/images/home.png)](https://youtu.be/z0wjztHBaaU)
 
-## Deploy on Vercel
+## Screenshots
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+### Profile
+![Profile](https://github.com/dominichackett/homeschooler/blob/main/images/profile.png)
+
+
+### Tutorials
+![Tutorials](https://github.com/dominichackett/homeschooler/blob/main/images/tutorials.png)
+
+
+### Create Tutorial
+![Create Tutorial](https://github.com/dominichackett/homeschooler/blob/main/images/createtutorial.png)
+
+### View Tutorial
+![View Tutorial](https://github.com/dominichackett/homeschooler/blob/main/images/viewtutorial.png)
+
+### Videos
+![Videos](https://github.com/dominichackett/homeschooler/blob/main/images/videos.png)
+
+
+### Test
+![Test](https://github.com/dominichackett/homeschooler/blob/main/images/test.png)
+
+### Quiz
+![Test](https://github.com/dominichackett/homeschooler/blob/main/images/quiz.png)
+
+
+
