@@ -25,35 +25,35 @@ Home Schooler is an AI Tutor Dapp designed to assist high school students in the
 Home Schooler is an AI-powered educational companion designed to revolutionize the learning experience for high school students. It offers a comprehensive suite of tools to support personalized learning, making education accessible, engaging, and effective. One of its key features is the ability to create detailed tutorials by selecting the school system, class or year, and subject, then entering the tutorial title, description, and objectives, and adding content such as text, media, and interactive elements. Once a tutorial is created, students can select a topic they wish to learn about, and Home Schooler will generate a detailed tutorial. Additionally, Home Schooler can query the web and present relevant YouTube videos based on the current tutorial, enhancing the learning experience with supplementary visual and auditory resources. Another powerful feature is the ability to generate interactive quizzes and tests aligned with the tutorial content, providing immediate feedback and helping students reinforce their understanding and track their progress over time. This integration of personalized tutorials, multimedia content, and interactive assessments ensures that Home Schooler caters to diverse learning styles and promotes effective, active learning.
 ## Demo Video
 
-[![IMAGE ALT TEXT HERE](https://github.com/dominichackett/homeschooler/blob/main/images/home.png)](https://youtu.be/z0wjztHBaaU)
+[![IMAGE ALT TEXT HERE](https://github.com/dominichackett/homeschooler/blob/master/images/home.png)](https://youtu.be/z0wjztHBaaU)
 
 ## Screenshots
 
 
 
 ### Profile
-![Profile](https://github.com/dominichackett/homeschooler/blob/main/images/profile.png)
+![Profile](https://github.com/dominichackett/homeschooler/blob/master/images/profile.png)
 
 
 ### Tutorials
-![Tutorials](https://github.com/dominichackett/homeschooler/blob/main/images/tutorials.png)
+![Tutorials](https://github.com/dominichackett/homeschooler/blob/master/images/tutorials.png)
 
 
 ### Create Tutorial
-![Create Tutorial](https://github.com/dominichackett/homeschooler/blob/main/images/createtutorial.png)
+![Create Tutorial](https://github.com/dominichackett/homeschooler/blob/master/images/createtutorial.png)
 
 ### View Tutorial
-![View Tutorial](https://github.com/dominichackett/homeschooler/blob/main/images/viewtutorial.png)
+![View Tutorial](https://github.com/dominichackett/homeschooler/blob/master/images/viewtutorial.png)
 
 ### Videos
-![Videos](https://github.com/dominichackett/homeschooler/blob/main/images/videos.png)
+![Videos](https://github.com/dominichackett/homeschooler/blob/master/images/videos.png)
 
 
 ### Test
-![Test](https://github.com/dominichackett/homeschooler/blob/main/images/test.png)
+![Test](https://github.com/dominichackett/homeschooler/blob/master/images/test.png)
 
 ### Quiz
-![Test](https://github.com/dominichackett/homeschooler/blob/main/images/quiz.png)
+![Test](https://github.com/dominichackett/homeschooler/blob/master/images/quiz.png)
 
 
 
