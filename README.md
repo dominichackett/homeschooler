@@ -44,6 +44,12 @@ Additionally, Home Schooler can query the web and present relevant YouTube video
 
 I was inspired to create Home Schooler to assist my son, who is currently in Form 1 in high school. Wanting to develop a tool that could provide personalized and engaging learning experiences, I designed Home Schooler to cater to his educational needs and to help other students.
 
+## How it's built
+
+ The front end is crafted using Next.js, a robust React framework renowned for its rapid and efficient rendering capabilities. Tailwind CSS is employed for styling, offering a utility-first design approach that guarantees a sleek and uniform interface. Furthermore, the platform harnesses the power of Remix to deploy smart contracts on Galadriel.  
+
+ At the heart and soul of Home Schooler is Galadriel, the first Layer 1 platform designed specifically for AI. Home Schooler connects and leverages OpenAI to create tutorials, search the web for YouTube videos, and generate interactive quizzes and tests. This integration ensures that Home Schooler provides a powerful, personalized educational experience that meets the diverse needs of students.
+
 ## Demo Video
 
 [![IMAGE ALT TEXT HERE](https://github.com/dominichackett/homeschooler/blob/master/images/home.png)](https://youtu.be/z0wjztHBaaU)
